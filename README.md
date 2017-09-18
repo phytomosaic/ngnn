@@ -1,0 +1,2 @@
+# ngnn
+Nonlinear Gradient Nearest Neighbors, a method for predicting multivariate species compositions from environmental variables based on individualistic but possibly coordinated species responses. Nonlinear responses are possible, which improves upon existing gradient nearest neighbors methods. Package also includes methods for other ecological tasks, including in-sample NMS ordination, out-of-sample NMS prediction, Nonparametric Constrained Ordination (NCO), Nonparametric Multiplicative Regression (NPMR), and simplified Gradient Nearest Neighbors (GNN).
