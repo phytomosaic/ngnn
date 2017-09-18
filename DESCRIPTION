@@ -1,0 +1,27 @@
+Package: ngnn
+Title: ngnn: Nonlinear Gradient Nearest Neighbors
+Version: 0.1-2017
+Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Description: Nonlinear Gradient Nearest Neighbors, a method
+          for predicting multivariate species compositions from
+          environmental variables based on individualistic but
+          possibly coordinated species responses. Nonlinear responses
+          are possible, which improves upon existing gradient nearest
+          neighbors methods. Package also includes methods for other
+          ecological tasks, including in-sample NMS ordination,
+          out-of-sample NMS prediction, Nonparametric Constrained
+          Ordination (NCO), Nonparametric Multiplicative Regression
+          (NPMR), and simplified Gradient Nearest Neighbors (GNN).
+Depends: R (>= 3.4.1)
+License: CC BY-NC-ND 4.0
+Encoding: UTF-8
+LazyData: true
+Date: 2017-09-18
+Author: 'Robert J Smith' <smithr2@oregonstate.edu>
+Creator: 'Robert J Smith' <smithr2@oregonstate.edu>
+Maintainer: 'Robert J Smith' <smithr2@oregonstate.edu>
+Imports: stats, graphics, reshape2, plyr, np, vegan, FNN
+Suggests: viridis
+Citation: Smith, Robert J. 2017. ngnn: Nonlinear gradient
+          nearest neighbors. Unpublished R package in development.
+RoxygenNote: 6.0.1
