@@ -125,7 +125,7 @@
      D0 <- vegan::vegdist(rbind(obj$iYhat, obj$oYhat), method)
      cat('Predicting new NCO scores...\n\n')
      nmsp <- NMSpredict(scr=obj$scr_i, dis=D0, neighb, maxits)
-     names(nmsp)[names(nmsp)=='newpoints'] <- 'scr_both'
+     names(nmsp)[names(nmsp)=='points'] <- 'scr_both'
      names(nmsp)[names(nmsp)=='newpoints'] <- 'scr_o'
      # flag if beyond range of existing scores
      flagax1 <- nmsp$scr_o[
@@ -142,8 +142,12 @@
      out
 }
 
+#  #' @useDynLib vegan
 ### NMSpredict core algorithm lightly adapted from add.points()
 `NMSpredict` <- function(scr, dis, neighb, maxits){
+     if (!requireNamespace("vegan", quietly = FALSE)) {
+          stop("Package package `vegan` required", call.=FALSE)
+     }
      # convert original scores to local matrix, and get sizes
      points  <- list(points=scr)
      class(points) <- 'nmds'
@@ -166,7 +170,7 @@
           pnt <- seq(1,oldn)[order(diss[,i])][1:neighb]
           weight <- 1-diss[pnt,i]
           for (j in 1:ncol(points)) {
-               tmp[i,j] <- weighted.mean(points[pnt,j],w=weight)
+               tmp[i,j] <-stats::weighted.mean(points[pnt,j],w=weight)
           }
      }
      xinit <- rbind(points,tmp)
@@ -221,7 +225,11 @@
                      stress=as.double(stress),
                      strs=as.double(strs),
                      iters=as.integer(iters),
-                     cause=as.integer(icause))
+                     cause=as.integer(icause),
+                     ##################
+                     PACKAGE='vegan'
+                     ##################
+     )
      res <- list(points=matrix(out$points,ncol=ndim),
                  newpoints=matrix(out$points,ncol=ndim)[(oldn+1):totn,],
                  stress=out$stress,
@@ -257,13 +265,14 @@
           cexn <- normalize(obj$id_i[cexn])
      } else { cexn <- 0.7 }
      # par(oma=rep(0,4), mar=c(4,4,1,1))
-     ordiplot(obj$scr_i, type=type, display='sites', xlim=xlim,
-              ylim=ylim, cex=cexn, las=1)
+     vegan::ordiplot(obj$scr_i, type=type, display='sites', xlim=xlim,
+                     ylim=ylim, cex=cexn, las=1)
      if(type=='points'){
-          points(obj$nmsp$scr_o, col=ocol, pch=16, cex=0.7)
+          graphics::points(obj$nmsp$scr_o, col=ocol, pch=16, cex=0.7)
      }
      if(type=='text'){
-          text(obj$nmsp$scr_o, labels=row.names(obj$nmsp$scr_o),
+          graphics::text(obj$nmsp$scr_o,
+                         labels=row.names(obj$nmsp$scr_o),
                col=ocol, cex=0.7)
      }
 }

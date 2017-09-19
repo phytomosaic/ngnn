@@ -60,7 +60,7 @@
 #' # NPMR basic usage
 #' res_npmr <- npmr(spe, idi, ido, nm, nmulti=5)
 #' summary(res_npmr)
-#' plot(res_npmr, pick=1:9)
+#' plot(res_npmr, pick=1:9, nm=nm)
 #'
 #' # NCO basic usage
 #' res_nco <- nco(res_npmr, method='bray', thresh=0.90)
@@ -113,23 +113,24 @@
      row.names(ord$points) <- row.names(obj$spe)
      names(ord$points)     <- c(paste0('NCO', 1:nax))
      scr_i <- ord$points                # NCO calibration scores
-     Dz  <- dist(scr_i, 'euc')          # NCO ordination distances
-     R2_internal <- cor(Dhat, Dz)^2     # R2 btwn constrnd Dhat and Dz
-     R2_enviro   <- cor(D, Dz)^2        # R2 btwn orig spp dist and Dz
+     Dz  <- stats::dist(scr_i, 'euc')   # NCO ordination distances
+     R2_internal <- stats::cor(Dhat, Dz)^2 # R2 btwn constrnd Dhat,Dz
+     R2_enviro <- stats::cor(D, Dz)^2   # R2 btwn orig spp dist and Dz
      R2_partial  <- matrix(rep(NA,nax), nrow=nax, ncol=1, byrow=T,
                            dimnames=list(obj$nm[1:obj$nm_len],
                                          'R2_partial'))
      for (i in 1:obj$nm_len){
-          R2_partial[i,] <- cor(Dz, dist(obj$id_i[obj$nm[[i]]]))^2
+          R2_partial[i,] <-
+               stats::cor(Dz, stats::dist(obj$id_i[obj$nm[[i]]]))^2
      }
-     Axis_tau <- cor(obj$id_i, scr_i, method='kendall')
+     Axis_tau <- stats::cor(obj$id_i, scr_i, method='kendall')
      out_nco <- c(obj,
-              list(scr_i        = scr_i,
-                   NCO_model    = ord,
-                   R2_internal  = R2_internal,
-                   R2_enviro    = R2_enviro,
-                   R2_partial   = R2_partial,
-                   Axis_tau     = Axis_tau))
+                  list(scr_i        = scr_i,
+                       NCO_model    = ord,
+                       R2_internal  = R2_internal,
+                       R2_enviro    = R2_enviro,
+                       R2_partial   = R2_partial,
+                       Axis_tau     = Axis_tau))
      class(out_nco) <- 'nco'
      out_nco
 }
@@ -157,9 +158,8 @@
      if(!is.null(cexn)){
           cexn <- normalize(obj$id_i[cexn])
      } else { cexn <- 0.7 }
-     # par(oma=rep(0,4), mar=c(4,4,1,1))
-     vegan::ordiplot(obj$scr_i, type=type, display='sites', xlim=xlim,
-                     ylim=ylim, cex=cexn, las=1, ...)
+     vegan::ordiplot(obj$scr_i, type=type, display='sites',
+                     xlim=xlim, ylim=ylim, cex=cexn, las=1, ...)
 }
 # automatic scale for cex (this function is also in package `ecole`)
 `normalize` <- function(x, ...){

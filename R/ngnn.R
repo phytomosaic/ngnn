@@ -122,13 +122,13 @@
 #' nm  <- c('Al', 'K')      # select 1 or 2 gradients of interest
 #'
 #' # basic usage
-#' res <- ngnn(spe, idi, ido, nm, nmulti=5, pa=F, pr=F,
-#'             method='bray', thresh=0.90, neighb=5, maxits=999, k=1)
+#' res <- ngnn(spe, idi, ido, nm, nmulti=5, method='bray',
+#'             thresh=0.90, neighb=5, maxits=999, k=1)
 #' summary(res)
 #' str(res, 1)
 #'
 #' # plot the species response curves
-#' ngnn_plot_spp(res, pick=1:9)
+#' ngnn_plot_spp(res, pick=1:9, nm=nm)
 #'
 #' # plot the NCO gradient space
 #' ngnn_plot_nco(res)
@@ -207,7 +207,9 @@
      class(res_gnn) <- 'ngnn'
      res_gnn
 }
-### GNN core function (not exported)
+#' @export
+#' @rdname ngnn
+### GNN core function
 `gnn` <- function(obj, k, ...){
      stopifnot(class(obj)=='ncopredict')
      cat('Finding nearest neighbor(s) in NCO space...\n\n')
@@ -257,15 +259,15 @@
      if(!is.null(cexn)){
           cexn <- normalize(obj$id_i[cexn])
      } else { cexn <- 0.7 }
-     # par(oma=rep(0,4), mar=c(4,4,1,1))
      vegan::ordiplot(obj$scr_i, type=type, display='sites',
                      xlim=xlim, ylim=ylim, cex=cexn, las=1)
      if(type=='points'){
-          points(obj$nmsp$scr_o, col=ocol, pch=16, cex=0.7)
+          graphics::points(obj$nmsp$scr_o, col=ocol, pch=16, cex=0.7)
      }
      if(type=='text'){
-          text(obj$nmsp$scr_o, labels=row.names(obj$nmsp$scr_o),
-               col=ocol, cex=0.7)
+          graphics::text(obj$nmsp$scr_o,
+                         labels=row.names(obj$nmsp$scr_o),
+                         col=ocol, cex=0.7)
      }
 }
 #' @export
@@ -277,7 +279,7 @@
 #' @export
 #' @rdname ngnn
 # inspect species response curves from NPMR
-`ngnn_plot_spp` <- function(obj, pick=NULL, zlim, ...){
+`ngnn_plot_spp` <- function(obj, pick=NULL, zlim, nm, ...){
      stopifnot(class(obj)=='ngnn')
      spe <- obj$spe
      obj <- obj$np_mods
@@ -295,17 +297,21 @@
      x2 <- seq(min(obj[[1]]$eval[[2]]),max(obj[[1]]$eval[[2]]),len=ev)
      dd <- expand.grid(x1, x2)
      names(dd) <- nm
-     par(mfrow=c(fn5()[1], fn5()[2]), oma=c(0,0,0,0), mar=c(0,0,.9,0))
+     graphics::par(mfrow=c(fn5()[1], fn5()[2]),
+                   oma=c(0,0,0,0), mar=c(0,0,.9,0))
      cat('Plotting species response curves, just a moment...\n')
      for (i in pick){
-          f <- matrix(predict(obj[[i]], newdata=dd), ev, ev)
+          f <- matrix(stats::predict(obj[[i]], newdata=dd), ev, ev)
           if(wasmissing) {
                if(identical(min(f), max(f))) mn <- 0 else mn <- min(f)
                zlim <- c(mn*0.9, max(f)*1.1)
           }
-          persp(x1, x2, f, col='lightblue', main=names(obj)[[i]],
-                xlab=nm[[1]], ylab=nm[[2]], zlab='',
-                theta=125, phi=35, d=1.5, ltheta = -30, lphi = 55,
-                shade=0.9, ticktype='d', expand=0.7, zlim=zlim)
+          graphics::persp(x1, x2, f, col='lightblue',
+                          main=names(obj)[[i]],
+                          xlab=nm[[1]], ylab=nm[[2]], zlab='',
+                          theta=125, phi=35, d=1.5, ltheta = -30,
+                          lphi = 55, shade=0.9, ticktype='d',
+                          expand=0.7, zlim=zlim)
+
      }
 }

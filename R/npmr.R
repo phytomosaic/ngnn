@@ -80,12 +80,12 @@
 #' summary(res_npmr)
 #'
 #' # sensitivity analysis
-#' Q <- npmr_sens(obj=res_npmr, pick = 'Vaccmyrt')
+#' Q <- npmr_sens(obj=res_npmr, pick = 'Vaccmyrt', nm)
 #' Q
 #'
 #' # plot NPMR species response curves
-#' plot(res_npmr, pick=4) # alternatively: pick='Vaccmyrt'
-#' plot(res_npmr, pick=1:9)
+#' plot(res_npmr, pick=4, nm)   # alternatively: pick='Vaccmyrt'
+#' plot(res_npmr, pick=1:9, nm)
 #'
 #' @family npmr functions
 #'
@@ -127,8 +127,8 @@
      # bw0 <- sapply(id_i, FUN=function(x){diff(range(x))*0.05})
      `fn1` <- function(x){
           bw  <- np::npregbw(
-               as.formula(paste('abund ~',
-                                paste(nm,collapse='+'))),
+               stats::as.formula(paste('abund ~',
+                                       paste(nm,collapse='+'))),
                data=x, nmulti=nmulti)
      }
      `fn2` <- function(x){
@@ -139,8 +139,8 @@
                              variable.name='spp', value.name='abund')
      bw    <- plyr::dlply(tmp, plyr::.(spp), fn1, .progress='text')
      cat('Performing np regressions...\n')
-     mod   <- plyr::llply(bw, fn2, .progress = 'text')
-     iYhat <- plyr::ldply(mod, fitted)
+     mod   <- plyr::llply(bw, .fun=fn2, .progress = 'text')
+     iYhat <- plyr::ldply(mod, .fun=stats::fitted)
      row.names(iYhat) <- iYhat[,1]
      iYhat <- iYhat[,-1]
      iYhat <- data.frame(t(iYhat))
@@ -157,7 +157,7 @@
      # NPMR predictions for out-of-sample sample units
      cat('Predictions for out-of-sample SUs, may take a moment...\n')
      `fn4` <- function(x){
-          preds <- predict(x, newdata = id_o)
+          preds <- stats::predict(x, newdata = id_o)
      }
      oYhat <- plyr::ldply(mod, fn4, .progress = 'text')
      sppnames <- oYhat[,1]
@@ -181,7 +181,7 @@
 #' @export
 #' @rdname npmr
 # sensitivity analysis # TO DO: need to iterate large number of times
-`npmr_sens` <- function(obj, pick, ...){
+`npmr_sens` <- function(obj, pick, nm, ...){
      stopifnot(class(obj)=='npmr')
      stopifnot(obj$nm_len==2)
      if(length(pick)!=1) stop('Choose only 1 species')
@@ -198,9 +198,9 @@
           rep(pick, nrow(id)*2 ))
      names(eval) <- c(paste0(obj$nm[[1]]), paste0(obj$nm[[2]]), 'spp')
      cat('Fitting nudged values for var 1, may take a moment...\n\n')
-     nudgpr <- predict(obj = mod[[pick]],
-                       data = obj$spe[,pick],
-                       newdata = eval)
+     nudgpr <- stats::predict(obj = mod[[pick]],
+                              data = obj$spe[,pick],
+                              newdata = eval)
      numer <- sum(abs( nudgpr - c(spe[, pick], spe[, pick])))
      denom <- 2*nrow(id)*diff(range( spe[, pick] ))*0.05
      Q[1]  <- numer/denom
@@ -212,9 +212,9 @@
           rep(pick, nrow(id)*2 ))
      names(eval) <- c(paste0(obj$nm[[1]]), paste0(obj$nm[[2]]), 'spp')
      cat('Fitting nudged values for var 2, may take a moment...\n\n')
-     nudgpr <- predict(obj = mod[[pick]],
-                       data = obj$spe[,pick],
-                       newdata = eval)
+     nudgpr <- stats::predict(obj = mod[[pick]],
+                              data = obj$spe[,pick],
+                              newdata = eval)
      numer <- sum(abs( nudgpr - c(spe[, pick], spe[, pick])))
      denom <- 2*nrow(id)*diff(range( spe[, pick] ))*0.05
      Q[2] <- numer/denom
@@ -228,13 +228,13 @@
 `summary.npmr` <- function(obj, ...){
      stopifnot(class(obj)=='npmr')
      out <- list(nm        = obj$nm,
-                 np_stat    = obj$np_stat)
+                 np_stat   = obj$np_stat)
      out
 }
 #' @export
 #' @rdname npmr
 # inspect species response curves from NPMR
-`plot.npmr` <- function(obj, pick=NULL, zlim, ...){
+`plot.npmr` <- function(obj, pick=NULL, nm, zlim, ...){
      stopifnot(class(obj)=='npmr')
      spe <- obj$spe
      obj <- obj$np_mods
@@ -252,18 +252,21 @@
      x2 <- seq(min(obj[[1]]$eval[[2]]),max(obj[[1]]$eval[[2]]),len=ev)
      dd <- expand.grid(x1, x2)
      names(dd) <- nm
-     par(mfrow=c(fn5()[1], fn5()[2]), oma=c(0,0,0,0), mar=c(0,0,.9,0))
+     graphics::par(mfrow=c(fn5()[1], fn5()[2]),
+                   oma=c(0,0,0,0), mar=c(0,0,.9,0))
      cat('Plotting species response curves, just a moment...\n')
      for (i in pick){
-          f <- matrix(predict(obj[[i]], newdata=dd), ev, ev)
+          f <- matrix(stats::predict(obj[[i]], newdata=dd), ev, ev)
           if(wasmissing) {
                if(identical(min(f), max(f))) mn <- 0 else mn <- min(f)
                zlim <- c(mn*0.9, max(f)*1.1)
           }
-          persp(x1, x2, f, col='lightblue', main=names(obj)[[i]],
-                xlab=nm[[1]], ylab=nm[[2]], zlab='',
-                theta=125, phi=35, d=1.5, ltheta = -30, lphi = 55,
-                shade=0.9, ticktype='d', expand=0.7, zlim=zlim)
+          graphics::persp(x1, x2, f, col='lightblue',
+                          main=names(obj)[[i]],
+                          xlab=nm[[1]], ylab=nm[[2]], zlab='',
+                          theta=125, phi=35, d=1.5, ltheta = -30,
+                          lphi = 55, shade=0.9, ticktype='d',
+                          expand=0.7, zlim=zlim)
      }
 }
 ###   end   ###
