@@ -76,7 +76,7 @@ nm  <- c('Al', 'K')      # select 1 or 2 gradients of interest
 # NPMR basic usage
 res_npmr <- npmr(spe, idi, ido, nm, nmulti=5)
 summary(res_npmr)
-plot(res_npmr, pick=1:9)
+plot(res_npmr, pick=1:9, nm=nm)
 
 # NCO basic usage
 res_nco <- nco(res_npmr, method='bray', thresh=0.90)

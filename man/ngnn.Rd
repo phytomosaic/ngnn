@@ -2,6 +2,7 @@
 % Please edit documentation in R/ngnn.R
 \name{ngnn}
 \alias{ngnn}
+\alias{gnn}
 \alias{summary.ngnn}
 \alias{ngnn_plot_nco}
 \alias{ngnn_get_spp}
@@ -11,13 +12,15 @@
 ngnn(spe, idi, ido, nm, nmulti = 5, pa = FALSE, pr = FALSE,
   method = "bray", thresh = 0.9, neighb = 5, maxits = 999, k = 1, ...)
 
+gnn(obj, k, ...)
+
 \method{summary}{ngnn}(obj, ...)
 
 ngnn_plot_nco(obj, type = "points", ocol = 2, cexn = NULL, ...)
 
 ngnn_get_spp(obj, ...)
 
-ngnn_plot_spp(obj, pick = NULL, zlim, ...)
+ngnn_plot_spp(obj, pick = NULL, zlim, nm, ...)
 }
 \arguments{
 \item{spe}{species dataframe, rows = sample units and columns =
@@ -143,13 +146,13 @@ ido <- id[-i, ]          # out-of-sample predictors
 nm  <- c('Al', 'K')      # select 1 or 2 gradients of interest
 
 # basic usage
-res <- ngnn(spe, idi, ido, nm, nmulti=5, pa=F, pr=F,
-            method='bray', thresh=0.90, neighb=5, maxits=999, k=1)
+res <- ngnn(spe, idi, ido, nm, nmulti=5, method='bray',
+            thresh=0.90, neighb=5, maxits=999, k=1)
 summary(res)
 str(res, 1)
 
 # plot the species response curves
-ngnn_plot_spp(res, pick=1:9)
+ngnn_plot_spp(res, pick=1:9, nm=nm)
 
 # plot the NCO gradient space
 ngnn_plot_nco(res)

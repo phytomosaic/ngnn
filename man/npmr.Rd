@@ -9,11 +9,11 @@
 \usage{
 npmr(spe, idi, ido, nm, nmulti, pa, pr, ...)
 
-npmr_sens(obj, pick, ...)
+npmr_sens(obj, pick, nm, ...)
 
 \method{summary}{npmr}(obj, ...)
 
-\method{plot}{npmr}(obj, pick = NULL, zlim, ...)
+\method{plot}{npmr}(obj, pick = NULL, nm, zlim, ...)
 }
 \arguments{
 \item{spe}{species dataframe, rows = sample units and columns =
@@ -96,12 +96,12 @@ res_npmr <- npmr(spe, idi, ido, nm, nmulti=5)
 summary(res_npmr)
 
 # sensitivity analysis
-Q <- npmr_sens(obj=res_npmr, pick = 'Vaccmyrt')
+Q <- npmr_sens(obj=res_npmr, pick = 'Vaccmyrt', nm)
 Q
 
 # plot NPMR species response curves
-plot(res_npmr, pick=4) # alternatively: pick='Vaccmyrt'
-plot(res_npmr, pick=1:9)
+plot(res_npmr, pick=4, nm)   # alternatively: pick='Vaccmyrt'
+plot(res_npmr, pick=1:9, nm)
 
 }
 \references{
