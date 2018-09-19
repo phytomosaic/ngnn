@@ -111,3 +111,4 @@ Li, Q. and J. S. Racine. 2007. Nonparametric Econometrics: Theory
 McCune, B. 2006. Non-parametric habitat models with automatic
   interactions. Journal of Vegetation Science 17(6):819-830.
 }
+\concept{npmr functions}

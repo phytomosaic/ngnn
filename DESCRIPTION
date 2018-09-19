@@ -24,4 +24,4 @@ Imports: stats, graphics, reshape2, plyr, np, vegan, FNN
 Suggests: viridis
 Citation: Smith, Robert J. 2017. ngnn: Nonlinear gradient
           nearest neighbors. Unpublished R package in development.
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0

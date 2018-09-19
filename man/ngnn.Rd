@@ -10,7 +10,8 @@
 \title{NGNN, Nonlinear Gradient Nearest Neighbors}
 \usage{
 ngnn(spe, idi, ido, nm, nmulti = 5, pa = FALSE, pr = FALSE,
-  method = "bray", thresh = 0.9, neighb = 5, maxits = 999, k = 1, ...)
+  method = "bray", thresh = 0.9, neighb = 5, maxits = 999, k = 1,
+  ...)
 
 gnn(obj, k, ...)
 
@@ -216,3 +217,4 @@ Ohmann, J.L., and M.J. Gregory. 2002. Predictive mapping of forest
     \code{\link{nco_predict}} for predictive NCO, and
     \code{gnn} for the core function of NGNN.
 }
+\concept{ngnn functions}

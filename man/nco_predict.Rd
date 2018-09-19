@@ -8,8 +8,8 @@
 \usage{
 nco_predict(obj, method, neighb, maxits, ...)
 
-\method{plot}{ncopredict}(obj, type = "points", ocol = 2, cexn = NULL,
-  ...)
+\method{plot}{ncopredict}(obj, type = "points", ocol = 2,
+  cexn = NULL, ...)
 }
 \arguments{
 \item{obj}{object of class 'nco' from call to \code{\link{nco}}}
@@ -123,3 +123,4 @@ Roberts, D.W. 2017. LabDSV: Non-metric Multidimensional Scaling.
   URL http://ecology.msu.montana.edu/labdsv/R/labs/lab9/lab9.html
   [original code, as \code{add.points()}]
 }
+\concept{ncopredict functions}
